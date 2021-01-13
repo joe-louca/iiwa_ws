@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- The planning and execution components of MoveIt! configured to run -->
+    <!-- using the ROS-Industrial interface. -->
+    
+    <!-- | 		PARAMETERS  		| -->
+    <arg name="sim" default="true" doc="If true, the robot will be simulated in Gazebo" /> <!-- sim = true means connect to a simulated robot-->
+    <arg name="hardware_interface" default="PositionJointInterface"/> <!--PositionJointInterface / EffortJointInterface / VelocityJointInterface -->
+    
+    <!-- The is gonna have its nodes/topics under a namespace with the same name. i.e. everything under /iiwa/-->
+    <arg name="robot_name" default="iiwa"/>
+    <arg name="model" default="iiwa7"/>    <!-- Model of the iiwa to use : iiwa7, iiwa14 -->
+    <arg name="rviz" default="true" />
+    
+    
+    <remap from="/$(arg hardware_interface)_trajectory_controller/follow_joint_trajectory" 
+           to="/$(arg robot_name)/$(arg hardware_interface)_trajectory_controller/follow_joint_trajectory" /> <!--"/iiwa/PositionJointInterface_trajectory_controller/follow_joint_trajectory"-->
+           
+    <remap from="robot_description" to="/$(arg robot_name)/robot_description" /> <!--"/iiwa/robot_description-->
+    <remap from="/get_planning_scene" to="/$(arg robot_name)/get_planning_scene" />  <!--"/iiwa/get_planning scene"-->
+    
+    
+    <!-- Run the robot within a Gazebo simulation. -->
+    <group if="$(arg sim)">
+        <!-- Load Gazebo with given values -->
+        <include file="$(find iiwa_gazebo)/launch/iiwa_gazebo.launch">		<!-- Launch iiwa_gazebo.launch ##########-->
+            <arg name="hardware_interface" value="$(arg hardware_interface)"/>
+            <arg name="robot_name" value="$(arg robot_name)" />
+            <arg name="model" value="$(arg model)"/>
+        </include>
+    </group>
+    
+    
+    <!-- Working with the real robot. DEFAULT NOT TO DO THIS -->
+    <group ns="$(arg robot_name)" unless="$(arg sim)">
+        <!-- Load controllers accordingly to parameters -->
+        <include file="$(find iiwa_control)/launch/iiwa_control.launch">		<!-- Launch iiwa_control.launch NOT DONE WITHOUT HW-->
+            <arg name="hardware_interface" value="$(arg hardware_interface)" />
+            <arg name="controllers" value="joint_state_controller $(arg hardware_interface)_trajectory_controller" />
+            <arg name="robot_name" value="$(arg robot_name)" />
+            <arg name="model" value="$(arg model)" />
+            
+        </include>
+        <!-- Robot interface -->
+        <include file="$(find iiwa_hw)/launch/iiwa_hw.launch" >			<!-- Launch iiwa_hw.launch NOT DONE WITHOUT HW-->
+            <arg name="hardware_interface" value="$(arg hardware_interface)" />
+        </include>
+    </group>
+    
+    
+    <!-- Load move_group -->
+    <group ns="$(arg robot_name)">
+        <include file="$(find iiwa_moveit)/launch/move_group.launch">		<!-- Launch move_group.launch-->
+            <arg name="publish_monitored_planning_scene" value="true" />
+            <arg name="hardware_interface" value="$(arg hardware_interface)"/>
+            <arg name="robot_name" value="$(arg robot_name)"/>
+            <arg name="model" value="$(arg model)" />
+        </include>
+        
+        <include if="$(arg rviz)" file="$(find iiwa_moveit)/launch/moveit_rviz.launch"> <!-- Launch moveit_rviz.launch-->
+            <arg name="config" value="true"/>
+        </include>
+    </group>
+    
+</launch>
