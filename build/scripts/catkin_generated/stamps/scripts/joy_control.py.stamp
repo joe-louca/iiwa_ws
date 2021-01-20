@@ -14,6 +14,7 @@ from math import pi
 from std_msgs.msg import String
 from moveit_commander.conversions import pose_to_list
 from sensor_msgs.msg import Joy
+import time
 
 
 def all_close(goal, actual, tolerance):
@@ -158,32 +159,39 @@ class MoveGroupPythonInterface(object):
     move_group.stop()					# Ensures that there is no residual movement
     move_group.clear_pose_targets()			# Clear targets after planning with poses.
 
-    print('starting joystick control')
-      
+    print('######### starting joystick control')
+    
     while not rospy.is_shutdown():
         # read & log joystick input
+        start_time = time.time()
         rospy.Subscriber("joy", Joy, self.callback, queue_size=1)
+        print('---Time to callback Joy: %s seconds ---' % (time.time() - start_time))
         
         # If a command has been received plan a motion for this group to a desired pose for the end-effector:
         if self.ax or self.but:  # if joystick input received
+            start_time = time.time()
             o_w = 1.0
-            p_x = p_x + step_size * self.ax[1]
-            p_y = p_y + step_size * self.ax[0]
-            p_z = p_z + step_size * self.ax[7]
+            p_x = p_x + step_size * self.ax[1] # left/right left joystick
+            p_y = p_y + step_size * self.ax[0] # up/down left joystick
+            p_z = p_z + step_size * self.ax[7] # up/down d-pad
             
             pose_goal.orientation.w = o_w
             pose_goal.position.x = p_x
             pose_goal.position.y = p_y
             pose_goal.position.z = p_z
-            print(pose_goal)
+            #print(pose_goal)
             
             move_group.set_pose_target(pose_goal)		# Set goal
+            print('---Time to set goal: %s seconds ---' % (time.time() - start_time))
 
+            start_time = time.time()
             plan = move_group.go()				# Call the planner to compute the plan and execute it.
             move_group.stop()					# Ensures that there is no residual movement
             move_group.clear_pose_targets()			# Clear targets after planning with poses.
-    input_rate.sleep()
-
+            print('---Time to compute plan and execute: %s seconds ---' % (time.time() - start_time))
+            
+    input_rate.sleep()    
+    
     
     # For testing:
     current_pose = self.move_group.get_current_pose().pose

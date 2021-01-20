@@ -15,6 +15,7 @@
   <depend>moveit_commander</depend>
   <depend>moveit_msgs</depend>
   <depend>geometry_msgs</depend>
+  <!--depend>getch</depend-->
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

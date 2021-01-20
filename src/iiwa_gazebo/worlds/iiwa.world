@@ -26,6 +26,7 @@
           <use_dynamic_moi_rescaling>false</use_dynamic_moi_rescaling>
         </solver>
       </ode>
+      <gravity>0 0 0</gravity>
     </physics>
     
     <!-- Focus camera -->

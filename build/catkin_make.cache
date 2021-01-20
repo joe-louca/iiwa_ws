@@ -1,2 +1,2 @@
-iiwa_control:iiwa_description:iiwa_gazebo:iiwa_hw:iiwa_moveit:iiwa_msgs:iiwa_ros:scripts
+iiwa_control:iiwa_description:iiwa_gazebo:iiwa_hw:iiwa_moveit:iiwa_msgs:iiwa_ros:iiwa_tool_description:iiwa_tool_moveit:scripts
 -DCATKIN_DEVEL_PREFIX=/home/joe/iiwa_ws/devel -DCMAKE_INSTALL_PREFIX=/home/joe/iiwa_ws/install -G Unix Makefiles

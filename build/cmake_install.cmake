@@ -135,10 +135,12 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/joe/iiwa_ws/build/iiwa_ros/cmake_install.cmake")
   include("/home/joe/iiwa_ws/build/iiwa_control/cmake_install.cmake")
   include("/home/joe/iiwa_ws/build/iiwa_description/cmake_install.cmake")
+  include("/home/joe/iiwa_ws/build/iiwa_tool_description/cmake_install.cmake")
   include("/home/joe/iiwa_ws/build/iiwa_gazebo/cmake_install.cmake")
   include("/home/joe/iiwa_ws/build/iiwa_hw/cmake_install.cmake")
   include("/home/joe/iiwa_ws/build/scripts/cmake_install.cmake")
   include("/home/joe/iiwa_ws/build/iiwa_moveit/cmake_install.cmake")
+  include("/home/joe/iiwa_ws/build/iiwa_tool_moveit/cmake_install.cmake")
 
 endif()
 
